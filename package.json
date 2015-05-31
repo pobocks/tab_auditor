@@ -1,0 +1,9 @@
+{
+  "name": "tab_auditor",
+  "title": "Tab Auditor",
+  "id": "jid1-vBxnOymQkokOoQ",
+  "description": "A small utility for managing tabs",
+  "author": "Dave Mayo <pobocks@gmail.com",
+  "license": "MPL 2.0",
+  "version": "0.1"
+}
