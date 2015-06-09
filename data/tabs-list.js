@@ -11,7 +11,9 @@ addon.port.on("show", function (tab_data) {
 
     var val = e.target.value.replace(/\\/, "\\\\"),
         els = document.getElementById("tabslist").childNodes,
-        re;
+        shown = document.getElementById('shown'),
+        re,
+        unselected;
 
     try {
       re = RegExp(val);
@@ -19,16 +21,40 @@ addon.port.on("show", function (tab_data) {
     catch (e) {
       re = null;
     }
-    Array.prototype.map.bind(els)( (el, i) => {
-      if (!val || !re) {
-        el.className = '';
+
+    var i = 0;
+    if (!val || !re) {
+      for (var el of els) {
+        i++;
+        el.className = (i <= 10 ? '' : 'hidden');
       }
-      else if (el.textContent.match(re)) {
-        el.className = "highlight";
+      if (i <= 10) {
+        shown.textContent = "All " + i + " tabs shown";
       }
       else {
-        el.className = '';
+        shown.textContent = "10 of " + i + " tabs shown";
       }
-    });
+    }
+    else {
+
+      for (var el of els){
+        if (el.textContent.match(re)) {
+          i++;
+          el.className = (i <= 10 ? "selected" : "selected hidden");
+        }
+        else {
+          el.className = 'unselected';
+        }
+      }
+
+
+      if (i <= 10) {
+        shown.textContent = "" + i + " tabs selected";
+      }
+      else {
+        shown.textContent = "" + 10 + " shown of " + i + " tabs selected";
+      }
+    }
+
   });
 });

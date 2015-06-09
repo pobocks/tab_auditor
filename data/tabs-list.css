@@ -1,0 +1,3 @@
+#tabslist li.unselected, #tabslist li.hidden {
+  display: none;
+}
