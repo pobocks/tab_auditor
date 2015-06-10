@@ -5,15 +5,15 @@ addon.port.on("show", function (tab_data) {
     [for (td of tab_data) td.title + " (" + td.url + ")"].join("</li><li>") +
     "</li>";
 
-  document.getElementById("filter").addEventListener("keyup", (e) => {
+  var redraw = (e) => {
     e.stopPropagation();
     e.preventDefault();
 
     var val = e.target.value.replace(/\\/, "\\\\"),
-        els = document.getElementById("tabslist").childNodes,
-        shown = document.getElementById('shown'),
         re,
-        unselected;
+        filter = document.getElementById("filter"),
+        shown = document.getElementById('shown'),
+        els = document.getElementById("tabslist").childNodes;
 
     try {
       re = RegExp(val);
@@ -47,7 +47,6 @@ addon.port.on("show", function (tab_data) {
         }
       }
 
-
       if (i <= 10) {
         shown.textContent = "" + i + " tabs selected";
       }
@@ -56,5 +55,8 @@ addon.port.on("show", function (tab_data) {
       }
     }
 
-  });
+  };
+
+  filter.addEventListener("keyup", redraw);
+
 });
