@@ -1,6 +1,6 @@
 "use strict";
 
-addon.port.on("show", function (tab_data) {
+self.port.on("show", function (tab_data) {
   document.getElementById("tabslist").innerHTML =
     [for (td of tab_data) '<li data-id="' + td.id + '">' + td.title + " (" + td.url + ")</li>"].join("\n");
 
@@ -59,7 +59,7 @@ addon.port.on("show", function (tab_data) {
   filter.addEventListener("keyup", redraw);
   document.getElementById('kill').addEventListener("click", function (e) {
     e.preventDefault();
-    addon.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
+    self.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
 });
