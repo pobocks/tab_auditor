@@ -59,7 +59,9 @@ self.port.on("show", function (tab_data) {
   filter.addEventListener("keyup", redraw);
   document.getElementById('kill').addEventListener("click", function (e) {
     e.preventDefault();
+    filter.value = '';
     self.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
+  filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
 });
