@@ -12,46 +12,37 @@ self.port.on("show", function (tab_data) {
         re,
         filter = document.getElementById("filter"),
         shown = document.getElementById('shown'),
-        els = document.getElementById("tabslist").childNodes;
+        els = document.getElementById("tabslist").children,
+        i;
 
     try {
-      re = RegExp(val);
+      re = RegExp(val, "i");
     }
     catch (e) {
       re = null;
     }
 
-    var i = 0;
+    i = 0;
     if (!val || !re) {
       for (var el of els) {
         i++;
-        el.className = (i <= 10 ? '' : 'hidden');
+        el.className = '';
       }
-      if (i <= 10) {
-        shown.textContent = "All " + i + " tabs shown";
-      }
-      else {
-        shown.textContent = "10 of " + i + " tabs shown";
-      }
+
+      shown.textContent = "All " + i + " tabs shown";
     }
     else {
-
+      i = 0;
       for (var el of els){
         if (el.textContent.match(re)) {
           i++;
-          el.className = (i <= 10 ? "selected" : "selected hidden");
+          el.className = "selected";
         }
         else {
           el.className = 'unselected';
         }
       }
-
-      if (i <= 10) {
-        shown.textContent = "" + i + " tabs selected";
-      }
-      else {
-        shown.textContent = "" + 10 + " shown of " + i + " tabs selected";
-      }
+      shown.textContent = "" + i + " of " + els.length + " tabs selected";
     }
 
   };

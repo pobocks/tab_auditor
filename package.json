@@ -1,9 +1,10 @@
 {
   "name": "tab_auditor",
   "title": "Tab Auditor",
-  "id": "jid1-vBxnOymQkokOoQ",
+  "id": "jid1-vBxnOymQkokOoQ@jetpack",
   "description": "A small utility for managing tabs",
   "author": "Dave Mayo <pobocks@gmail.com",
   "license": "MPL 2.0",
-  "version": "0.1"
+  "version": "0.1.0",
+  "main": "lib/main.js"
 }
