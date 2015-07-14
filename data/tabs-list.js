@@ -1,8 +1,10 @@
 "use strict";
 
-self.port.on("show", function (tab_data) {
-  document.getElementById("tabslist").innerHTML =
-    [for (td of tab_data) '<li data-id="' + td.id + '">' + td.title + " (" + td.url + ")</li>"].join("\n");
+(function () {
+
+  var filter = document.getElementById("filter"),
+      shown = document.getElementById('shown'),
+      tabslist = document.getElementById("tabslist");
 
   var redraw = (e) => {
     e.stopPropagation();
@@ -10,9 +12,7 @@ self.port.on("show", function (tab_data) {
 
     var val = e.target.value.replace(/\\/, "\\\\"),
         re,
-        filter = document.getElementById("filter"),
-        shown = document.getElementById('shown'),
-        els = document.getElementById("tabslist").children,
+        els = tabslist.children,
         i;
 
     try {
@@ -34,7 +34,7 @@ self.port.on("show", function (tab_data) {
     else {
       i = 0;
       for (var el of els){
-        if (el.textContent.match(re)) {
+        if (el.querySelector('.label') && el.querySelector('.label').textContent.match(re)) {
           i++;
           el.className = "selected";
         }
@@ -44,15 +44,29 @@ self.port.on("show", function (tab_data) {
       }
       shown.textContent = "" + i + " of " + els.length + " tabs selected";
     }
-
   };
 
+  self.port.on("show", function (tab_data) {
+    document.getElementById("tabslist").innerHTML =
+      [for (td of tab_data) `<li data-id="${td.id}"><span class="label">${td.title} (${td.url})</span> <button class="kill">X</button></li>`].join("\n");
+    filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
+  });
+
   filter.addEventListener("keyup", redraw);
+
   document.getElementById('kill').addEventListener("click", function (e) {
     e.preventDefault();
     filter.value = '';
     self.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
-  filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
-});
+  tabslist.addEventListener('click', function (e) {
+    var me = e.originalTarget;
+    e.preventDefault();
+
+    if (me.classList.contains('kill')) {
+      self.port.emit('kill', [me.parentElement.dataset.id]);
+    }
+  });
+
+})();
