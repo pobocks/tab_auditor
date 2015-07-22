@@ -60,6 +60,13 @@
     self.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
+  document.getElementById('collect').addEventListener("click", function (e) {
+    e.preventDefault();
+    filter.value = '';
+    self.port.emit("collect", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
+  });
+
+
   tabslist.addEventListener('click', function (e) {
     var me = e.originalTarget;
     e.preventDefault();
