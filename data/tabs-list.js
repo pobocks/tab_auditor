@@ -60,6 +60,13 @@
     self.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
+  document.getElementById('dedup').addEventListener("click", function (e) {
+    e.preventDefault();
+    var query = filter.value ? '#tabslist li.selected' : '#tabslist li';
+
+    self.port.emit("deduplicate", [for (li of document.querySelectorAll(query)) li.dataset.id]);
+  });
+
   document.getElementById('collect').addEventListener("click", function (e) {
     e.preventDefault();
     filter.value = '';
