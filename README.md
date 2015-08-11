@@ -36,3 +36,6 @@ There is a button per tab to kill tab.
 ## Bulk Actions
 - Contiguous grouping in same window (i.e. move group to end)
 - sort by depth in routing hierarchy? (e.g. [www.e.com, www.e.com/one-thing, www.e.com/one/two])
+
+## Known Issues
+- Does not resume function across browser close/restart.
