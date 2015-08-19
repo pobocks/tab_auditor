@@ -24,6 +24,8 @@ There is a button per tab to kill tab.
 
 ## Basic interface
 - Some sort of list of candidates - possibly dual-window mode (MC-style) or checkboxes and checked items are sticky despite filter?
+- Preview (using thumbs?) for tab on button or mouseover
+- button on candidate to go to tab
 
 ## Filtering
 - Token-based filter (i.e. by concatting space-sep tokens as zero-width assertions)
