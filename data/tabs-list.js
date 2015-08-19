@@ -2,9 +2,11 @@
 
 (function () {
 
-  var filter = document.getElementById("filter"),
-      shown = document.getElementById('shown'),
-      tabslist = document.getElementById("tabslist");
+  var ui = {
+    filter: document.getElementById("filter"),
+    shown: document.getElementById('shown'),
+    tabslist: document.getElementById("tabslist")
+  };
 
   var redraw = (e) => {
     e.stopPropagation();
@@ -12,7 +14,7 @@
 
     var val = e.target.value,
         re,
-        els = tabslist.children,
+        els = ui.tabslist.children,
         i;
 
     try { re = RegExp(val, "i") } catch (e) { re = null }
@@ -33,9 +35,9 @@
         else { el.className = 'unselected' }
       }
     }
-    shown.textContent = (i === els.length) ?
-      shown.textContent = "All " + i + " tabs shown" :
-      shown.textContent = "" + i + " of " + els.length + " tabs selected";
+    ui.shown.textContent = (i === els.length) ?
+      ui.shown.textContent = "All " + i + " tabs shown" :
+      ui.shown.textContent = "" + i + " of " + els.length + " tabs selected";
   };
 
   self.port.on("show", function (tab_data) {
@@ -43,22 +45,22 @@
       [for (td of tab_data) `<li data-id="${td.id}"><span class="label">${td.title} (${td.url})</span> <button class="kill">X</button></li>`].join("\n");
 
     // Trigger redraw by triggering filter
-    filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
+    ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
   });
 
-  filter.addEventListener("keyup", redraw);
+  ui.filter.addEventListener("keyup", redraw);
 
   // Bulk kill selected tabs
   document.getElementById('kill').addEventListener("click", function (e) {
     e.preventDefault();
-    filter.value = '';
+    ui.filter.value = '';
     self.port.emit("kill", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
   // Deduplicate selected (or all)
   document.getElementById('dedup').addEventListener("click", function (e) {
     e.preventDefault();
-    var query = filter.value ? '#tabslist li.selected' : '#tabslist li';
+    var query = ui.filter.value ? '#tabslist li.selected' : '#tabslist li';
 
     self.port.emit("deduplicate", [for (li of document.querySelectorAll(query)) li.dataset.id]);
   });
@@ -66,12 +68,12 @@
   // Collect selected tabs into new window
   document.getElementById('collect').addEventListener("click", function (e) {
     e.preventDefault();
-    filter.value = '';
+    ui.filter.value = '';
     self.port.emit("collect", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
   // Individual kill buttons
-  tabslist.addEventListener('click', function (e) {
+  ui.tabslist.addEventListener('click', function (e) {
     var me = e.originalTarget;
     e.preventDefault();
 
