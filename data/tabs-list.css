@@ -26,6 +26,9 @@ html, body {
 #tabslist li > .label {
   flex: 1 auto;
   align-self: flex-start;
+  /* HAX - This is to prevent interface from
+   * becoming unusable in event of long lines */
+  overflow-x: hidden;
 }
 
 #tabslist li > .kill {
