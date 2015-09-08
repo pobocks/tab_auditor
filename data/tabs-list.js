@@ -35,6 +35,11 @@
         else { el.className = 'unselected' }
       }
     }
+
+    let visible = document.querySelectorAll('#tabslist > li:not(.unselected)'),
+        last = visible[visible.length - 1];
+    if (last) { last.className += ' last' }
+
     ui.shown.textContent = (i === els.length) ?
       ui.shown.textContent = "All " + i + " tabs shown" :
       ui.shown.textContent = "" + i + " of " + els.length + " tabs selected";
