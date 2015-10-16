@@ -50,6 +50,7 @@
       [for (td of tab_data)
         `<li data-id="${td.id}">
            <span class="label">${td.title} (${td.url})</span>
+           <button class="thumb"><i class="fa fa-search"></i></button>
            <button class="kill"><i class="fa fa-close"></i></button>
          </li>`].join("\n");
 
@@ -81,7 +82,7 @@
     self.port.emit("collect", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
-  // Individual kill buttons
+  // Individual kill and goto buttons
   ui.tabslist.addEventListener('click', function (e) {
     var me = e.originalTarget;
     e.preventDefault();
@@ -89,6 +90,10 @@
     if (me.classList.contains('kill')) {
       self.port.emit('kill', [me.parentElement.dataset.id]);
     }
+    else if (me.classList.contains('thumb')){
+      self.port.emit('goto', me.parentElement.dataset.id);
+    }
   });
+
 
 })();
