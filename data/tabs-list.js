@@ -47,7 +47,11 @@
 
   self.port.on("show", function (tab_data) {
     document.getElementById("tabslist").innerHTML =
-      [for (td of tab_data) `<li data-id="${td.id}"><span class="label">${td.title} (${td.url})</span> <button class="kill">X</button></li>`].join("\n");
+      [for (td of tab_data)
+        `<li data-id="${td.id}">
+           <span class="label">${td.title} (${td.url})</span>
+           <button class="kill"><i class="fa fa-close"></i></button>
+         </li>`].join("\n");
 
     // Trigger redraw by triggering filter
     ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
