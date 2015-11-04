@@ -44,4 +44,4 @@ There is a button per tab to kill tab.
 - sort by depth in routing hierarchy? (e.g. [www.e.com, www.e.com/one-thing, www.e.com/one/two])
 
 ## Known Issues
-- Moving between windows via dragging tab from tabbar to tabbar breaks connection between backend and frontend. Sigh.
+- Moving auditor tabs between windows via dragging tab from tabbar to tabbar breaks connection between backend and frontend. Sigh.
