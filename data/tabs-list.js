@@ -9,6 +9,8 @@
     tabslist: document.getElementById("tabslist")
   };
 
+  var tabs;
+
   /* Array of functions which return a regex to use
      for filtering tabs. */
   let filter_methods = {
@@ -98,7 +100,12 @@
       ui.shown.textContent = "" + i + " of " + els.length + " tabs selected";
   };
 
-  self.port.on("show", function (tab_data) {
+  self.port.on("populate", function (tab_data) {
+    tabs = tab_data;
+    show_f(tabs);
+  });
+
+  var show_f = function (tab_data) {
     document.getElementById("tabslist").innerHTML =
       [for (td of tab_data)
         `<li data-id="${td.id}">
@@ -109,7 +116,9 @@
 
     // Trigger redraw by triggering filter
     ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
-  });
+  };
+
+  self.port.on("show", show_f);
 
   ui.filter.addEventListener("keyup", redraw);
 
@@ -155,6 +164,5 @@
       self.port.emit('goto', me.parentElement.dataset.id);
     }
   });
-
 
 })();
