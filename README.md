@@ -8,7 +8,12 @@ Basically, what this does is allow a user to select a group of tabs whose URI or
 
 ## Filtering
 
-It is possible to filter a the list of tabs.  This is naively implemented - it's just "feed me a regex", then that regex is applied to the concatenated title and URL.
+It is possible to filter the list of tabs. This filter is applied to across the concatenated title and URL of each tab.
+
+There are two modes of operation:
+
+1. space-delimited tokenized whitelist filter. This is the default - tabs containing all of the specified tokens in any order, `*` is `.*`, most regex metachars are literalized.
+2. raw regex filter.  Full JS regex syntax support, `.*` is `.*` 
 
 ## Kill per tab
 
@@ -28,7 +33,6 @@ There is a button per tab to kill tab.
 - button on candidate to go to tab
 
 ## Filtering
-- Token-based filter (i.e. by concatting space-sep tokens as zero-width assertions)
 - Time:Initial open
 - Time:Last view (feasible?)
 
@@ -40,4 +44,4 @@ There is a button per tab to kill tab.
 - sort by depth in routing hierarchy? (e.g. [www.e.com, www.e.com/one-thing, www.e.com/one/two])
 
 ## Known Issues
-- Temporarily none pending improvement of knowledge
+- Moving between windows via dragging tab from tabbar to tabbar breaks connection between backend and frontend. Sigh.

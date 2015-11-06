@@ -4,9 +4,27 @@
 
   var ui = {
     filter: document.getElementById("filter"),
+    method: document.getElementById("filter-method"),
     shown: document.getElementById('shown'),
     tabslist: document.getElementById("tabslist")
   };
+
+  var filter_methods = {
+    "Token": val => {
+      return '^' +
+        val.split(/\s+/)
+           .map(tok => `(?=.*${tok.replace(/([.+$?^{}|~])/g, '\\$1')})`)
+           .join('');
+    },
+    "Regex": val => {
+      return val;
+    }
+  };
+
+  // Redraw when filter-method changes
+  ui.method.addEventListener('change', function (e) {
+    ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
+  });
 
   var redraw = (e) => {
     e.stopPropagation();
@@ -17,7 +35,7 @@
         els = ui.tabslist.children,
         i;
 
-    try { re = RegExp(val, "i") } catch (e) { re = null }
+    try { re = RegExp(filter_methods[ui.method.value](val), "i") } catch (e) { re = null }
 
     i = 0;
     if (!val || !re) {
