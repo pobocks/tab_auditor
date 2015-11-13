@@ -100,6 +100,14 @@
     self.port.emit("collect", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
+  // Collate selected tabs at end of window
+  document.getElementById('collate').addEventListener("click", function (e) {
+    e.preventDefault();
+    ui.filter.value = '';
+    self.port.emit("collate", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
+  });
+
+
   // Individual kill and goto buttons
   ui.tabslist.addEventListener('click', function (e) {
     var me = e.originalTarget;
