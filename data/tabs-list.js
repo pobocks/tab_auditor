@@ -120,6 +120,10 @@
 
   self.port.on("show", show_f);
 
+  self.port.on("test_datafy_all", function (tab_data) {
+    console.log(tab_data);
+  });
+
   ui.filter.addEventListener("keyup", redraw);
 
   // Bulk kill selected tabs
@@ -151,6 +155,10 @@
     self.port.emit("collate", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
   });
 
+  document.getElementById('test').addEventListener("click", function (e) {
+    e.preventDefault();
+    self.port.emit("test_datafy_all");
+  });
 
   // Individual kill and goto buttons
   ui.tabslist.addEventListener('click', function (e) {
