@@ -11,10 +11,23 @@
 
   var filter_methods = {
     "Token": val => {
-      return '^' +
-        val.split(/\s+/)
-           .map(tok => `(?=.*${tok.replace(/([.+$?^{}|~])/g, '\\$1')})`)
-           .join('');
+      var pos = [], neg = [],
+          tokens = val.split(/\s+/),
+          len = tokens.length;
+
+      while (len--) {
+        if (tokens[len].match(/^\^/)) {
+          if (tokens[len] === '^') { continue; }
+          neg.push(tokens[len].slice(1));
+        }
+        else {
+          pos.push(tokens[len]);
+        }
+      }
+
+      pos = pos.map(tok => `(?=.*${tok.replace(/([.+$?^{}|~])/g, '\\$1')})`).join('');
+      neg = (neg.length > 0) ? `(^((?!${neg.map(tok => tok.replace(/([.+$?^{}|~])/g, '\\$1')).join('|')}).)*$)$` : ''
+      return '^' + pos + neg;
     },
     "Regex": val => {
       return val;

@@ -12,7 +12,7 @@ It is possible to filter the list of tabs. This filter is applied to across the 
 
 There are two modes of operation:
 
-1. space-delimited tokenized whitelist filter. This is the default - tabs containing all of the specified tokens in any order, `*` is `.*`, most regex metachars are literalized.
+1. space-delimited tokenized whitelist filter. This is the default - tabs containing all of the specified tokens in any order, `*` is `.*`, most regex metachars are literalized.  A leading `^` character serves as an inverted filter (i.e. anything with that token will NOT match, e.g. `things ^stuff` means "any tab with things that doesn't have stuff")
 2. raw regex filter.  Full JS regex syntax support, `.*` is `.*` 
 
 ## Kill per tab
