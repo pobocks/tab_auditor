@@ -2,16 +2,20 @@
 
 (function () {
 
-  var ui = {
+  let ui = {
     filter: document.getElementById("filter"),
     method: document.getElementById("filter-method"),
     shown: document.getElementById('shown'),
     tabslist: document.getElementById("tabslist")
   };
 
-  var filter_methods = {
+  /* Array of functions which return a regex to use
+     for filtering tabs. */
+  let filter_methods = {
+    /* Matches strings with all positive tokens present
+       and no negative tokens present */
     "Token": val => {
-      var pos = [], neg = [],
+      let pos = [], neg = [],
           tokens = val.split(/\s+/),
           len = tokens.length;
 
@@ -26,7 +30,8 @@
       }
 
       pos = pos.map(tok => `(?=.*${tok.replace(/([.+$?^{}|~])/g, '\\$1')})`).join('');
-      neg = (neg.length > 0) ? `(^((?!${neg.map(tok => tok.replace(/([.+$?^{}|~])/g, '\\$1')).join('|')}).)*$)$` : ''
+      neg = (neg.length > 0) ? `(^((?!${ neg.map(tok => tok.replace(/([.+$?^{}|~])/g, '\\$1')).join('|') }).)*$)$` : ''
+
       return '^' + pos + neg;
     },
     "Regex": val => {
@@ -39,11 +44,11 @@
     ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
   });
 
-  var redraw = (e) => {
+  let redraw = (e) => {
     e.stopPropagation();
     e.preventDefault();
 
-    var val = e.target.value,
+    let val = e.target.value,
         re,
         els = ui.tabslist.children,
         i;
@@ -52,13 +57,13 @@
 
     i = 0;
     if (!val || !re) {
-      for (var el of els) {
+      for (let el of els) {
         i++;
         el.className = '';
       }
     }
     else {
-      for (var el of els){
+      for (let el of els){
         if (el.querySelector('.label') && el.querySelector('.label').textContent.match(re)) {
           i++;
           el.className = "selected";
@@ -101,7 +106,7 @@
   // Deduplicate selected (or all)
   document.getElementById('dedup').addEventListener("click", function (e) {
     e.preventDefault();
-    var query = ui.filter.value ? '#tabslist li.selected' : '#tabslist li';
+    let query = ui.filter.value ? '#tabslist li.selected' : '#tabslist li';
 
     self.port.emit("deduplicate", [for (li of document.querySelectorAll(query)) li.dataset.id]);
   });
@@ -123,7 +128,7 @@
 
   // Individual kill and goto buttons
   ui.tabslist.addEventListener('click', function (e) {
-    var me = e.originalTarget;
+    let me = e.originalTarget;
     e.preventDefault();
 
     if (me.classList.contains('kill')) {
