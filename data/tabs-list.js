@@ -100,10 +100,61 @@
       ui.shown.textContent = "" + i + " of " + els.length + " tabs selected";
   };
 
+  let redraw_all = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    let val = e.target.value,
+        re,
+        els = ui.tabslist.children.querySelectorAll('li:not(.window-title)'),
+        i;
+
+    i = 0;
+    if (!val || !re) {
+      for (let el of els) {
+        i++;
+        el.className = '';
+      }
+    }
+    else {
+      for (let el of els){
+        if (el.querySelector('.label') && el.querySelector('.label').textContent.match(re)) {
+          i++;
+          el.className = "selected";
+        }
+        else { el.className = 'unselected' }
+      }
+    }
+
+    let visible = document.querySelectorAll('#tabslist > li:not(.unselected, .window-title)'),
+        last = visible[visible.length - 1];
+    if (last) { last.className += ' last' }
+
+    ui.shown.textContent = (i === els.length) ?
+      ui.shown.textContent = "All " + i + " tabs shown" :
+      ui.shown.textContent = "" + i + " of " + els.length + " tabs selected";
+  };
   self.port.on("populate", function (tab_data) {
     tabs = tab_data;
     show_f(tabs);
   });
+
+  var show_f_all = function (w_data) {
+    document.getElementById("tabslist").innerHTML =
+      [for (w of w_data)
+        [`<li class="window-title">${w.active ? 'Active ' : ''} Window ${w.window_id}</li>`].concat(
+          [for (td of w.tab_data)
+            `<li data-id="${td.id}">
+              <span class="label">${td.title} (${td.url})</span>
+              <button class="thumb"><i class="fa fa-search"></i></button>
+              <button class="kill"><i class="fa fa-close"></i></button>
+           </li>`]
+        ).join("\n")
+      ].join("\n");
+
+    ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
+  };
+
 
   var show_f = function (tab_data) {
     document.getElementById("tabslist").innerHTML =
