@@ -57,7 +57,6 @@
         val      = tgt.value,
         char_len = val.length,
         case_sen = "i",
-
         re,
         els      = ui.tabslist.children,
         i;
@@ -79,7 +78,6 @@
     i = 0;
     if (!val || !re) {
       for (let el of els) {
-        console.log("no filter");
         i++;
         el.className = '';
       }
@@ -150,7 +148,7 @@
     document.getElementById("tabslist").innerHTML =
       [for (w of w_data)
         [`<li class="window-title">${w.active ? 'Active ' : ''} Window ${w.window_id}</li>`].concat(
-          [for (td of w)
+          [for (td of w.tabs)
            ((td.search_string = `${td.title} (${td.url})`),
             `<li data-id="${td.id}">
               <span class="label">${td.search_string}</span>
