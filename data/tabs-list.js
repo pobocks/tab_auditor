@@ -9,6 +9,8 @@
     tabslist: document.getElementById("tabslist")
   };
 
+  let winrep = [];
+
   var tabs;
 
   /* Array of functions which return a regex to use
@@ -55,6 +57,7 @@
         val      = tgt.value,
         char_len = val.length,
         case_sen = "i",
+
         re,
         els      = ui.tabslist.children,
         i;
@@ -76,6 +79,7 @@
     i = 0;
     if (!val || !re) {
       for (let el of els) {
+        console.log("no filter");
         i++;
         el.className = '';
       }
@@ -104,10 +108,13 @@
     e.stopPropagation();
     e.preventDefault();
 
-    let val = e.target.value,
+    let tgt = e.target || ui.filter,
+        val = tgt.value,
         re,
-        els = ui.tabslist.children.querySelectorAll('li:not(.window-title)'),
+        els = document.querySelectorAll('#tabslist > li:not(.window-title)'),
         i;
+
+    try { re = RegExp(filter_methods[ui.method.value](val), "i") } catch (e) { re = null }
 
     i = 0;
     if (!val || !re) {
@@ -126,7 +133,7 @@
       }
     }
 
-    let visible = document.querySelectorAll('#tabslist > li:not(.unselected, .window-title)'),
+    let visible = document.querySelectorAll('#tabslist > li:not(.unselected):not(.window-title)'),
         last = visible[visible.length - 1];
     if (last) { last.className += ' last' }
 
@@ -136,46 +143,34 @@
   };
   self.port.on("populate", function (tab_data) {
     tabs = tab_data;
-    show_f(tabs);
+    show_f_all(tabs);
   });
 
   var show_f_all = function (w_data) {
     document.getElementById("tabslist").innerHTML =
       [for (w of w_data)
         [`<li class="window-title">${w.active ? 'Active ' : ''} Window ${w.window_id}</li>`].concat(
-          [for (td of w.tab_data)
+          [for (td of w)
+           ((td.search_string = `${td.title} (${td.url})`),
             `<li data-id="${td.id}">
-              <span class="label">${td.title} (${td.url})</span>
+              <span class="label">${td.search_string}</span>
               <button class="thumb"><i class="fa fa-search"></i></button>
               <button class="kill"><i class="fa fa-close"></i></button>
-           </li>`]
+           </li>`)]
         ).join("\n")
       ].join("\n");
-
-    ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
+    winrep = w_data;
+    // Directly call redraw bc needs to be done immediately
+    redraw_all(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
   };
 
+  self.port.on("show", show_f_all);
 
-  var show_f = function (tab_data) {
-    document.getElementById("tabslist").innerHTML =
-      [for (td of tab_data)
-        `<li data-id="${td.id}">
-           <span class="label">${td.title} (${td.url})</span>
-           <button class="thumb"><i class="fa fa-search"></i></button>
-           <button class="kill"><i class="fa fa-close"></i></button>
-         </li>`].join("\n");
-
-    // Trigger redraw by triggering filter
-    ui.filter.dispatchEvent(new KeyboardEvent('keyup', {cancelable: true, bubbles: true}));
-  };
-
-  self.port.on("show", show_f);
-
-  self.port.on("test_datafy_all", function (tab_data) {
-    console.log(tab_data);
+  var redraw_TO = null;
+  ui.filter.addEventListener("keyup", function (e) {
+    clearTimeout(redraw_TO);
+    redraw_TO = setTimeout(redraw_all, 200, e);
   });
-
-  ui.filter.addEventListener("keyup", redraw);
 
   // Bulk kill selected tabs
   document.getElementById('kill').addEventListener("click", function (e) {
@@ -204,11 +199,6 @@
     e.preventDefault();
     ui.filter.value = '';
     self.port.emit("collate", [for (li of document.querySelectorAll('#tabslist li.selected')) li.dataset.id]);
-  });
-
-  document.getElementById('test').addEventListener("click", function (e) {
-    e.preventDefault();
-    self.port.emit("test_datafy_all");
   });
 
   // Individual kill and goto buttons
