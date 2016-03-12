@@ -48,7 +48,8 @@
     e.stopPropagation();
     e.preventDefault();
 
-    let val = e.target.value,
+    let tgt = e.target || ui.filter,
+        val = tgt.value,
         re,
         els = ui.tabslist.children,
         i;
