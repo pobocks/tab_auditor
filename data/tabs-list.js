@@ -16,6 +16,7 @@
        and no negative tokens present */
     "Token": val => {
       let pos = [], neg = [],
+          re_quote = /[-\/\\^$*+?.()|\[\]{}]/g,
           tokens = val.split(/\s+/),
           len = tokens.length;
 
@@ -29,8 +30,8 @@
         }
       }
 
-      pos = pos.map(tok => `(?=.*${tok.replace(/([.+$?^{}|~])/g, '\\$1')})`).join('');
-      neg = (neg.length > 0) ? `(^((?!${ neg.map(tok => tok.replace(/([.+$?^{}|~])/g, '\\$1')).join('|') }).)*$)$` : ''
+      pos = pos.map(tok => `(?=.*${tok.replace(re_quote, '\\$&')})`).join('');
+      neg = (neg.length > 0) ? `(^((?!${ neg.map(tok => tok.replace(re_quote, '\\$&')).join('|') }).)*$)$` : ''
 
       return '^' + pos + neg;
     },
@@ -48,13 +49,27 @@
     e.stopPropagation();
     e.preventDefault();
 
-    let tgt = e.target || ui.filter,
-        val = tgt.value,
+    let tgt      = e.target || ui.filter,
+        val      = tgt.value,
+        char_len = val.length,
+        case_sen = "i",
         re,
-        els = ui.tabslist.children,
+        els      = ui.tabslist.children,
         i;
 
-    try { re = RegExp(filter_methods[ui.method.value](val), "i") } catch (e) { re = null }
+    // Case insensitive unless uppercase chars in string
+    while (char_len--) {
+      if (val[char_len] !== val[char_len].toLowerCase()) {
+        case_sen = "";
+        break;
+      }
+    }
+
+    /* Val might not contain a working regex, because users input one char at  *
+     * a time, or might just write bad regex. Ideally, perhaps, we'd strip any *
+     * broken parts off the end of what we have, but for now we're just gonna  *
+     * treat that case as "no regex"                                           */
+    try { re = RegExp(filter_methods[ui.method.value](val), case_sen) } catch (e) { re = null }
 
     i = 0;
     if (!val || !re) {
@@ -65,7 +80,8 @@
     }
     else {
       for (let el of els){
-        if (el.querySelector('.label') && el.querySelector('.label').textContent.match(re)) {
+        if (el.querySelector('.label') &&
+            el.querySelector('.label').textContent.match(re)) {
           i++;
           el.className = "selected";
         }
